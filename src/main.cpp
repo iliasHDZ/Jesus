@@ -34,7 +34,6 @@ bool levelEditorLayerEnabled() {
 void resetJesus() {
 	time_counter = 0.0;
 	last_jesus_time = -1000.0;
-	log::info("jesus variables reset");
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
