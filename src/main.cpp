@@ -9,22 +9,31 @@ float last_jesus_time = -1000.0;
 
 bool isImageValid = false;
 
+bool getBoolSetting(std::string key) {
+	return Mod::get()->getSettingValue<bool>(key);
+}
+std::filesystem::path getFileSetting(std::string key) {
+	return Mod::get()->getSettingValue<std::filesystem::path>(key);
+}
+bool modEnabled() {
+	return getBoolSetting("enabled");
+}
+bool playLayerEnabled() {
+	auto gjbgl = GJBaseGameLayer::get();
+	if (!gjbgl) return false;
+	return getBoolSetting("playLayer") && typeinfo_cast<PlayLayer*>(gjbgl);
+}
+bool levelEditorLayerEnabled() {
+	auto gjbgl = GJBaseGameLayer::get();
+	if (!gjbgl) return false;
+	return getBoolSetting("levelEditorLayer") && typeinfo_cast<LevelEditorLayer*>(gjbgl);
+}
+void resetJesus() {
+	time_counter = 0.0;
+	last_jesus_time = -1000.0;
+}
+
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
-	bool getBoolSetting(std::string key) {
-		return Mod::get()->getSettingValue<bool>(key);
-	}
-	std::filesystem::path getFileSetting(std::string key) {
-		return Mod::get()->getSettingValue<std::filesystem::path>(key);
-	}
-	bool modEnabled() {
-		return getBoolSetting("enabled");
-	}
-	bool playLayerEnabled() {
-		return getBoolSetting("playLayer") && (typeinfo_cast<PlayLayer>(this) != nullptr);
-	}
-	bool levelEditorLayerEnabled() {
-		return getBoolSetting("levelEditorLayer") && (typeinfo_cast<LevelEditorLayer>(this) != nullptr);
-	}
 	void jesus() {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
 		
@@ -58,7 +67,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (jesus_christ->getActionByTag(1)) jesus_christ->stopActionByTag(1);
 
 		jesus_christ->setOpacity(255);
-    		jesus_christ->runAction(CCFadeOut::create(1.0))->setTag(1);
+		jesus_christ->runAction(CCFadeOut::create(1.0))->setTag(1);
 	}
 
 	void update(float dt) {
@@ -86,19 +95,11 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		}
 	}
 
-	void resetPlayer() {
-		GJBaseGameLayer::resetPlayer();
-		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
-		time_counter = 0.0;
-		last_jesus_time = -1000.0;
-	}
-
 	bool init() {
 		if (!GJBaseGameLayer::init()) return false;
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
-		time_counter = 0.0;
-		last_jesus_time = -1000.0;
+		resetJesus();
 		bool isImageValid = false;
 
 		CCSprite* test = CCSprite::create(getFileSetting("customImage").string.c_str());
@@ -106,5 +107,16 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		else isImageValid = true;
 		
 		return true;
+	}
+};
+
+class $modify(MyPlayerObject, PlayerObject) {
+	void playerDestroyed(bool p0) {
+		PlayerObject::playerDestroyed(p0);
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
+		resetJesus();
+		auto gjbgl = GJBaseGameLayer::get();
+		if (!gjbgl) return;
+		log::info("isLevelEditor: {}", typeinfo_cast<bool>(typeinfo_cast<LevelEditorLayer*>(gjbgl)));
 	}
 };
