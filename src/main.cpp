@@ -9,6 +9,8 @@ float last_jesus_time = -1000.0;
 
 bool isImageValid = false;
 
+static const std::vector<int> hazards = { 8, 39, 103, 392, 216, 217, 218, 458, 144, 205, 145, 459, 177, 178, 179, 1715, 1719, 1720, 1721, 135, 1711, 1712, 1713, 1714, 1717, 1716, 1731, 367, 1723, 1732, 368, 1724, 1722, 1725, 1726, 1727, 1728, 1729, 1730, 1733, 3610, 3611, 9, 61, 243, 244, 366, 363, 364, 365, 446, 447, 667, 989, 991, 720, 421, 422, 768, 1705, 1706, 1707, 187, 188, 740, 1701, 1702, 1703, 183, 184, 185, 186, 741, 742, 1708, 1709, 1710, 678, 679, 680, 1734, 1735, 1736, 1619, 1620, 98, 88, 89, 397, 398, 399, 3034, 3035, 3036, 3037 };
+
 bool getBoolSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<bool>(key);
 }
@@ -87,7 +89,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		float sensitivity = Mod::get()->getSettingValue<double>("sensitivity");
 
 		for (auto obj : *objs) {
-			if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
+			// if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
+			if (std::ranges::find(hazards, obj->m_objectID) == hazards.end()) continue;
 
 			CCRect rect = CCRect(
 				obj->getObjectRect().origin - CCPoint(sensitivity, sensitivity),
