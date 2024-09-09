@@ -1,4 +1,5 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
@@ -117,6 +118,6 @@ class $modify(MyPlayerObject, PlayerObject) {
 		resetJesus();
 		auto gjbgl = GJBaseGameLayer::get();
 		if (!gjbgl) return;
-		log::info("isLevelEditor: {}", typeinfo_cast<bool>(typeinfo_cast<LevelEditorLayer*>(gjbgl)));
+		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
 	}
 };
