@@ -9,13 +9,13 @@ float last_jesus_time = -1000.0;
 
 bool isImageValid = false;
 
-bool getBoolSetting(std::string key) {
+bool getBoolSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<bool>(key);
 }
-std::filesystem::path getFileSetting(std::string key) {
+std::filesystem::path getFileSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<std::filesystem::path>(key);
 }
-std::string getFileSettingAsString(std::string key) {
+std::string getFileSettingAsString(std::string_view key) {
 	return getFileSetting(key).string();
 }
 bool modEnabled() {
