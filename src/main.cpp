@@ -82,6 +82,12 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		}
 	}
 
+	void resetPlayer() {
+		GJBaseGameLayer::resetPlayer();
+		time_counter = 0.0;
+		last_jesus_time = -1000.0;
+	}
+
 	bool init() {
 		if (!GJBaseGameLayer::init()) return false;
 		if (!modEnabled() || !playLayerEnabled() || !levelEditorLayerEnabled()) return true;
