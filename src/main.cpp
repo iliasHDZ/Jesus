@@ -1,5 +1,4 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
-#include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
@@ -15,6 +14,9 @@ bool getBoolSetting(std::string key) {
 }
 std::filesystem::path getFileSetting(std::string key) {
 	return Mod::get()->getSettingValue<std::filesystem::path>(key);
+}
+std::string getFileSettingAsString(std::string key) {
+	return getFileSetting(key).string();
 }
 bool modEnabled() {
 	return getBoolSetting("enabled");
@@ -42,8 +44,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus"_spr)) {
-			if (!getBoolSetting("customImage") || !isImageValid) jesus_christ = CCSprite::create("Jesus.png"_spr);
-			else jesus_christ = CCSprite::create(getFileSetting("customImage").string().c_str());
+			if (getFileSettingAsString("customImage") == "Please choose an image file." || !isImageValid) jesus_christ = CCSprite::create("Jesus.png"_spr);
+			else jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
@@ -62,8 +64,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if ((time_counter < 1.5) || (time_counter - last_jesus_time < 0.2)) return;
 		last_jesus_time = time_counter;
 
-		if (getFileSetting("customSound") == "Please choose an audio file.") FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
-		else FMODAudioEngine::sharedEngine()->playEffect(getFileSetting("customSound").string().c_str());
+		if (getFileSettingAsString("customSound") == "Please choose an audio file.") FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
+		else FMODAudioEngine::sharedEngine()->playEffect(getFileSettingAsString("customSound"));
 
 		if (jesus_christ->getActionByTag(1)) jesus_christ->stopActionByTag(1);
 
@@ -95,7 +97,21 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 			if (plr->getObjectRect().intersectsRect(rect)) jesus();
 		}
 	}
-
+	void toggleDualMode(GameObject* p0, bool p1, PlayerObject* p2, bool p3) {
+		GJBaseGameLayer::toggleDualMode(p0, p1, p2, p3);
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
+		resetJesus();
+		/*
+		ignore below code; it was to test resetJesus()
+		without relying on a missing GJBGL binding for macos ARM
+		--raydeeux
+		*/
+		/*
+		auto gjbgl = GJBaseGameLayer::get();
+		if (!gjbgl) return;
+		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
+		*/
+	}
 	bool init() {
 		if (!GJBaseGameLayer::init()) return false;
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
@@ -103,21 +119,10 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		resetJesus();
 		isImageValid = false;
 
-		CCSprite* test = CCSprite::create(getFileSetting("customImage").string().c_str());
+		CCSprite* test = CCSprite::create(getFileSettingAsString("customImage").c_str());
 		if (!test) isImageValid = false;
 		else isImageValid = true;
 		
 		return true;
-	}
-};
-
-class $modify(MyPlayerObject, PlayerObject) {
-	void playerDestroyed(bool p0) {
-		PlayerObject::playerDestroyed(p0);
-		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
-		resetJesus();
-		auto gjbgl = GJBaseGameLayer::get();
-		if (!gjbgl) return;
-		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
 	}
 };
