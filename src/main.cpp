@@ -34,6 +34,7 @@ bool levelEditorLayerEnabled() {
 void resetJesus() {
 	time_counter = 0.0;
 	last_jesus_time = -1000.0;
+	log::info("jesus variables reset");
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
@@ -105,10 +106,6 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		ignore below code; it was to test resetJesus()
 		without relying on a missing GJBGL binding for macos ARM
 		--raydeeux
-		*/
-		/*
-		auto gjbgl = GJBaseGameLayer::get();
-		if (!gjbgl) return;
 		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
 		*/
 	}
