@@ -1,3 +1,8 @@
+# 1.1.2
+- God could not convince RobTop or the developers of the FMOD audio engine to play the bell sound effect consistently, so He took matters into His own hands.
+- God also realized that the mod kept crashing in the level editor on Windows, so He dropped support for it temporarily.
+# 1.1.1
+- God made a mistake with His function hooks.
 # 1.1.0
 - And on the eighth day God realized that Jesus wanted to be on macOS and Android; and he let Jesus do so on the eighth day.
 - <cl>(Also, players can now choose how and when Jesus should appear, as well as what players hear when seeing Jesus.)</c>

@@ -16,7 +16,7 @@
 	"tags": [
 		"joke"
 	],
-	"version": "v1.1.1",
+	"version": "v1.1.2",
 	"id": "iliashdz.jesus",
 	"name": "Jesus",
 	"developer": "IliasHDZ",
@@ -39,7 +39,25 @@
 			"name": "Level Editor",
 			"description": "Show Jesus when playtesting levels in the level editor.",
 			"type": "bool",
-			"default": true
+			"default": true,
+			"platforms": ["mac", "android32", "android64"]
+		},
+		"volume": {
+			"name": "Volume (%)",
+			"description": "Set the volume of the bell (or custom sound effect you've chosen) as a percentage.",
+			"type": "int",
+			"default": 25,
+			"min": 0,
+			"max": 100,
+			"control": {
+				"input": true,
+				"slider": true,
+				"arrows": true,
+				"big-arrows": true,
+				"arrow-step": 1,
+				"big-arrow-step": 5,
+				"slider-step": 1
+			}
 		},
 		"sensitivity": {
 			"name": "Sensitivity",
@@ -50,9 +68,11 @@
 			"max": 10.0,
 			"control": {
 				"arrows": false,
+				"big-arrows": false,
 				"input": true,
+				"slider": true,
 				"slider-step": 0.01
-            		}
+			}
 		},
 		"customImage": {
 			"name": "Custom Image",

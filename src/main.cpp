@@ -9,8 +9,6 @@ float last_jesus_time = -1000.0;
 
 bool isImageValid = false;
 
-static const std::vector<int> hazards = { 8, 39, 103, 392, 216, 217, 218, 458, 144, 205, 145, 459, 177, 178, 179, 1715, 1719, 1720, 1721, 135, 1711, 1712, 1713, 1714, 1717, 1716, 1731, 367, 1723, 1732, 368, 1724, 1722, 1725, 1726, 1727, 1728, 1729, 1730, 1733, 3610, 3611, 9, 61, 243, 244, 366, 363, 364, 365, 446, 447, 667, 989, 991, 720, 421, 422, 768, 1705, 1706, 1707, 187, 188, 740, 1701, 1702, 1703, 183, 184, 185, 186, 741, 742, 1708, 1709, 1710, 678, 679, 680, 1734, 1735, 1736, 1619, 1620, 98, 88, 89, 397, 398, 399, 3034, 3035, 3036, 3037 };
-
 bool getBoolSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<bool>(key);
 }
@@ -19,6 +17,9 @@ std::filesystem::path getFileSetting(std::string_view key) {
 }
 std::string getFileSettingAsString(std::string_view key) {
 	return getFileSetting(key).string();
+}
+int64_t getIntSetting(std::string_view key) {
+	return Mod::get()->getSettingValue<int64_t>(key);
 }
 bool modEnabled() {
 	return getBoolSetting("enabled");
@@ -29,6 +30,9 @@ bool playLayerEnabled() {
 	return getBoolSetting("playLayer") && typeinfo_cast<PlayLayer*>(gjbgl);
 }
 bool levelEditorLayerEnabled() {
+	#ifdef GEODE_IS_WINDOWS
+	return false;
+	#endif
 	auto gjbgl = GJBaseGameLayer::get();
 	if (!gjbgl) return false;
 	return getBoolSetting("levelEditorLayer") && typeinfo_cast<LevelEditorLayer*>(gjbgl);
@@ -66,8 +70,13 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if ((time_counter < 1.5) || (time_counter - last_jesus_time < 0.2)) return;
 		last_jesus_time = time_counter;
 
-		if (getFileSettingAsString("customSound") == "Please choose an audio file.") FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
-		else FMODAudioEngine::sharedEngine()->playEffect(getFileSettingAsString("customSound"));
+		auto system = FMODAudioEngine::get()->m_system;
+		FMOD::Channel* channel;
+		FMOD::Sound* sound;
+		if (getFileSettingAsString("customSound") != "Please choose an audio file.") system->createSound(getFileSettingAsString("customSound").c_str(), FMOD_DEFAULT, nullptr, &sound);
+		else system->createSound((Mod::get()->getResourcesDir() / "bell.ogg").string().c_str(), FMOD_DEFAULT, nullptr, &sound);
+		system->playSound(sound, nullptr, false, &channel);
+		channel->setVolume(getIntSetting("volume") / 100.0f);
 
 		if (jesus_christ->getActionByTag(1)) jesus_christ->stopActionByTag(1);
 
@@ -81,36 +90,20 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		time_counter += dt;
 	}
 
-	void collisionCheckObjects(PlayerObject* plr, gd::vector<GameObject*>* objs, int v0, float v1) {
-		GJBaseGameLayer::collisionCheckObjects(plr, objs, v0, v1);
-		
-		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
+	void collisionCheckObjects(PlayerObject* player, gd::vector<GameObject*>* objs, int v0, float v1) {
+		if (modEnabled() && (playLayerEnabled() || levelEditorLayerEnabled())) {
+			float sensitivity = Mod::get()->getSettingValue<double>("sensitivity");
+			for (auto obj : *objs) {
+				if (obj == nullptr) continue;
+				if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
 
-		float sensitivity = Mod::get()->getSettingValue<double>("sensitivity");
+				const auto sensitivityRect = CCRect(obj->getObjectRect().origin - CCPoint(sensitivity, sensitivity), obj->getObjectRect().size + CCPoint(sensitivity * 2, sensitivity * 2));
 
-		for (auto obj : *objs) {
-			// if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
-			if (std::ranges::find(hazards, obj->m_objectID) == hazards.end()) continue;
-
-			CCRect rect = CCRect(
-				obj->getObjectRect().origin - CCPoint(sensitivity, sensitivity),
-				obj->getObjectRect().size + CCPoint(sensitivity * 2, sensitivity * 2)
-			);
-
-			if (plr->getObjectRect().intersectsRect(rect)) jesus();
+				if (player->getObjectRect().intersectsRect(sensitivityRect)) jesus();
+			}
 		}
-	}
-  
-	void toggleDualMode(GameObject* p0, bool p1, PlayerObject* p2, bool p3) {
-		GJBaseGameLayer::toggleDualMode(p0, p1, p2, p3);
-		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
-		resetJesus();
-		/*
-		ignore below code; it was to test resetJesus()
-		without relying on a missing GJBGL binding for macos ARM
-		--raydeeux
-		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
-		*/
+
+		GJBaseGameLayer::collisionCheckObjects(player, objs, v0, v1);
 	}
 
 	void resetLevelVariables() {
