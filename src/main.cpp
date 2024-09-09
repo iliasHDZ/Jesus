@@ -69,6 +69,12 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		}
 	}
 
+	void resetPlayer() {
+		GJBaseGameLayer::resetPlayer();
+		time_counter = 0.0;
+		last_jesus_time = -1000.0;
+	}
+
 	bool init() {
 		if (!init()) return false;
 
