@@ -41,7 +41,7 @@
 		},
 		"sensitivity": {
 			"name": "Sensitivity",
-			"description": "The minimum distance between the player hitbox and a spike hitbox required for Him (or your custom image) to appear.\n\nThe distance is most likely measured in pixels, but don't quote anyone on that.",
+			"description": "The minimum distance between the player hitbox and a spike hitbox required for Him (or your custom image) to appear.\n\nThe higher this value, the further away you can be from a spike in order to see Jesus.",
 			"type": "float",
 			"default": 2,
 			"min": 0.0,
