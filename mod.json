@@ -6,8 +6,10 @@
 		"android": "2.206"
 	},
 	"resources": {
+		"sprites": [
+			"resources/jesus.png"
+		],
 		"files": [
-			"resources/jesus.png",
 			"resources/bell.ogg"
 		]
 	},
