@@ -69,11 +69,19 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		}
 	}
 
+#ifdef defined(__APPLE__)
+	void reset() {
+		GJBaseGameLayer::reset();
+		time_counter = 0.0;
+		last_jesus_time = -1000.0;
+	}
+#else
 	void resetPlayer() {
 		GJBaseGameLayer::resetPlayer();
 		time_counter = 0.0;
 		last_jesus_time = -1000.0;
 	}
+#endif
 
 	bool init() {
 		if (!init()) return false;
