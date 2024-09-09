@@ -13,6 +13,9 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 	bool getBoolSetting(std::string key) {
 		return Mod::get()->getSettingValue<bool>(key);
 	}
+	std::filesystem::path getFileSetting(std::string key) {
+		return Mod::get()->getSettingValue<std::filesystem::path>(key);
+	}
 	bool modEnabled() {
 		return getBoolSetting("enabled");
 	}
@@ -23,14 +26,14 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		return getBoolSetting("levelEditorLayer") && typeinfo_cast<LevelEditorLayer>(this);
 	}
 	void jesus() {
-		if (!modEnabled() || !playLayerEnabled() || !levelEditorLayerEnabled()) return;
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
 		
 		auto scene = CCDirector::get()->getRunningScene();
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus"_spr)) {
 			if (!getBoolSetting("customImage") || !isImageValid) jesus_christ = CCSprite::create("Jesus.png"_spr);
-			else jesus_christ = CCSprite::create(Mod::get()->getSettingValue<std::filesystem::path>("customImage"));
+			else jesus_christ = CCSprite::create(getFileSetting("customImage"));
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
@@ -49,7 +52,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if ((time_counter < 1.5) || (time_counter - last_jesus_time < 0.2)) return;
 		last_jesus_time = time_counter;
 
-		FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
+		if (getFileSetting("customSound") == "Please choose an audio file.") FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
+		else FMODAudioEngine::sharedEngine()->playEffect(getFileSetting("customSound"));
 
 		if (jesus_christ->getActionByTag(1)) jesus_christ->stopActionByTag(1);
 
@@ -59,14 +63,14 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 	void update(float dt) {
 		GJBaseGameLayer::update(dt);
-		if (!modEnabled() || !playLayerEnabled() || !levelEditorLayerEnabled()) return;
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
 		time_counter += dt;
 	}
 
 	void collisionCheckObjects(PlayerObject* plr, gd::vector<GameObject*>* objs, int v0, float v1) {
 		GJBaseGameLayer::collisionCheckObjects(plr, objs, v0, v1);
 		
-		if (!modEnabled() || !playLayerEnabled() || !levelEditorLayerEnabled()) return;
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
 
 		float sensitivity = Mod::get()->getSettingValue<double>("sensitivity");
 
@@ -84,19 +88,20 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 	void resetPlayer() {
 		GJBaseGameLayer::resetPlayer();
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
 		time_counter = 0.0;
 		last_jesus_time = -1000.0;
 	}
 
 	bool init() {
 		if (!GJBaseGameLayer::init()) return false;
-		if (!modEnabled() || !playLayerEnabled() || !levelEditorLayerEnabled()) return true;
+		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
 		time_counter = 0.0;
 		last_jesus_time = -1000.0;
 		bool isImageValid = false;
 
-		CCSprite* test = CCSprite::create(Mod::get()->getSettingValue<std::filesystem::path>("customImage"));
+		CCSprite* test = CCSprite::create(getFileSetting("customImage"));
 		if (!test) isImageValid = false;
 		else isImageValid = true;
 		
