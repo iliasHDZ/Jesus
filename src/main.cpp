@@ -98,6 +98,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 			if (plr->getObjectRect().intersectsRect(rect)) jesus();
 		}
 	}
+  
 	void toggleDualMode(GameObject* p0, bool p1, PlayerObject* p2, bool p3) {
 		GJBaseGameLayer::toggleDualMode(p0, p1, p2, p3);
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
@@ -109,6 +110,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
 		*/
 	}
+  
 	bool init() {
 		if (!GJBaseGameLayer::init()) return false;
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
