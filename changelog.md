@@ -8,4 +8,4 @@
 # 1.0.1
 - God decided to set default sensitivity setting to 2.
 # 1.0.0
-- God created the Jesus mod
+- God created the Jesus mod.
