@@ -13,9 +13,9 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		auto scene = CCDirector::get()->getRunningScene();
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
-		if (!scene->getChildByID("jesus")) {
+		if (!scene->getChildByID("jesus"_spr)) {
 			jesus_christ = CCSprite::create("Jesus.png"_spr);
-			jesus_christ->setID("jesus");
+			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
 			float ratio_x = winSize.width / jesus_christ->getContentSize().width;
