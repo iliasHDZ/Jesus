@@ -20,10 +20,10 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		return getBoolSetting("enabled");
 	}
 	bool playLayerEnabled() {
-		return getBoolSetting("playLayer") && typeinfo_cast<PlayLayer>(this);
+		return getBoolSetting("playLayer") && (typeinfo_cast<PlayLayer>(this) != nullptr);
 	}
 	bool levelEditorLayerEnabled() {
-		return getBoolSetting("levelEditorLayer") && typeinfo_cast<LevelEditorLayer>(this);
+		return getBoolSetting("levelEditorLayer") && (typeinfo_cast<LevelEditorLayer>(this) != nullptr);
 	}
 	void jesus() {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
@@ -33,7 +33,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus"_spr)) {
 			if (!getBoolSetting("customImage") || !isImageValid) jesus_christ = CCSprite::create("Jesus.png"_spr);
-			else jesus_christ = CCSprite::create(getFileSetting("customImage"));
+			else jesus_christ = CCSprite::create(getFileSetting("customImage").string.c_str());
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
@@ -53,7 +53,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		last_jesus_time = time_counter;
 
 		if (getFileSetting("customSound") == "Please choose an audio file.") FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
-		else FMODAudioEngine::sharedEngine()->playEffect(getFileSetting("customSound"));
+		else FMODAudioEngine::sharedEngine()->playEffect(getFileSetting("customSound").string.c_str());
 
 		if (jesus_christ->getActionByTag(1)) jesus_christ->stopActionByTag(1);
 
@@ -101,7 +101,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		last_jesus_time = -1000.0;
 		bool isImageValid = false;
 
-		CCSprite* test = CCSprite::create(getFileSetting("customImage"));
+		CCSprite* test = CCSprite::create(getFileSetting("customImage").string.c_str());
 		if (!test) isImageValid = false;
 		else isImageValid = true;
 		
