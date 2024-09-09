@@ -114,12 +114,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
 		resetJesus();
-		isImageValid = false;
+		isImageValid = CCSprite::create(getFileSettingAsString("customImage").c_str()) != nullptr;
 
-		CCSprite* test = CCSprite::create(getFileSettingAsString("customImage").c_str());
-		if (!test) isImageValid = false;
-		else isImageValid = true;
-		
 		return true;
 	}
 };
