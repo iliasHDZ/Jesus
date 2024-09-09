@@ -12,7 +12,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 	void jesus() {
 		auto scene = CCDirector::get()->getRunningScene();
 
-		// I may or may not have copied from https://github.com/NicknameGG/robtop-jumpscare
+		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus")) {
 			jesus_christ = CCSprite::create("Jesus.png"_spr);
 			jesus_christ->setID("jesus");
