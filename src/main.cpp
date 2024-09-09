@@ -110,6 +110,11 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
 		*/
 	}
+
+	void resetLevelVariables() {
+		GJBaseGameLayer::resetLevelVariables();
+		resetJesus();
+	}
   
 	bool init() {
 		if (!GJBaseGameLayer::init()) return false;
