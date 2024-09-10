@@ -38,9 +38,13 @@
 		},
 		"levelEditorLayer": {
 			"name": "Level Editor",
-			"description": "Show Jesus when playtesting levels in the level editor.",
+			"description": "Show Jesus when playtesting levels in the level editor.\n\n<cy>If this feature is causing crashes for you, please</c> <cr>DISABLE IT</c><cy>.</c>",
 			"type": "bool",
-			"default": false,
+			"default": {
+				"win": false,
+				"mac": true,
+				"android": false
+			},
 			"platforms": ["mac", "android32", "android64"]
 		},
 		"volume": {
