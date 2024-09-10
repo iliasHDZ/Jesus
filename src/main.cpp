@@ -52,9 +52,10 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		auto scene = CCDirector::get()->getRunningScene();
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
-		if (!scene->getChildByID("jesus"_spr)) {
-			if (!isValidImage || getFileSettingAsString("customImage") == "Please choose an image file.") jesus_christ = CCSprite::create("jesus.png"_spr);
-			else jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
+		if (!scene->getChildByIDRecursive("jesus"_spr)) {
+			CCSprite* customSprite = CCSprite::create(getFileSettingAsString("customImage").c_str());
+			if ((!isValidImage && !customSprite) || getFileSettingAsString("customImage") == "Please choose an image file.") jesus_christ = CCSprite::create("jesus.png"_spr);
+			else jesus_christ = customSprite;
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
