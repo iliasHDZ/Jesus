@@ -39,7 +39,8 @@
 			"name": "Level Editor",
 			"description": "Show Jesus when playtesting levels in the level editor.",
 			"type": "bool",
-			"default": true
+			"default": true,
+			"platforms": ["mac", "android32", "android64"]
 		},
 		"volume": {
 			"name": "Volume (%)",
