@@ -119,6 +119,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!GJBaseGameLayer::init()) return false;
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
+		log::info("getFileSettingAsString(\"customImage\"): {}", getFileSettingAsString("customImage"));
 		resetJesus();
 		isValidImageOrIsNotDefault = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str()) != nullptr && getFileSettingAsString("customImage") != "Please choose an image file.";
 
