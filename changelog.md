@@ -1,6 +1,8 @@
 # 1.1.2
-- God could not convince RobTop or the developers of the FMOD audio engine to play the bell sound effect consistently, so He took matters into His own hands.
-- God also realized that the mod kept crashing in the level editor on Windows, so He dropped support for it temporarily.
+- And on the ninth day:
+      - God could not play the bell sound effect consistently, so He took matters into His own hands.
+      - God also realized that the mod kept crashing in the level editor on Windows, so He dropped support for it.
+      - God also realized Jesus was not appearing consistently on Android, and He decided to do something about it.
 # 1.1.1
 - God made a mistake with His function hooks.
 # 1.1.0

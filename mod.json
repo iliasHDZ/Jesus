@@ -33,13 +33,14 @@
 			"name": "Playing Levels",
 			"description": "Show Jesus when playing levels.",
 			"type": "bool",
-			"default": true
+			"default": true,
+			"platforms": ["mac", "android32", "android64"]
 		},
 		"levelEditorLayer": {
 			"name": "Level Editor",
 			"description": "Show Jesus when playtesting levels in the level editor.",
 			"type": "bool",
-			"default": true,
+			"default": false,
 			"platforms": ["mac", "android32", "android64"]
 		},
 		"volume": {

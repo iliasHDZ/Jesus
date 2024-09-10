@@ -7,7 +7,7 @@ CCSprite* jesus_christ = nullptr;
 float time_counter = 0.0;
 float last_jesus_time = -1000.0;
 
-bool isImageValid = false;
+bool isValidImageOrIsNotDefault = false;
 
 bool getBoolSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<bool>(key);
@@ -25,6 +25,9 @@ bool modEnabled() {
 	return getBoolSetting("enabled");
 }
 bool playLayerEnabled() {
+	#ifdef GEODE_IS_WINDOWS
+	return true; // this defaults to returning true because CLion sucks at understanding the nuances of Geode settings; defaulting to false would ultimately have the same effect
+	#endif
 	auto gjbgl = GJBaseGameLayer::get();
 	if (!gjbgl) return false;
 	return getBoolSetting("playLayer") && typeinfo_cast<PlayLayer*>(gjbgl);
@@ -50,7 +53,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus"_spr)) {
-			if (getFileSettingAsString("customImage") == "Please choose an image file." || !isImageValid) jesus_christ = CCSprite::create("Jesus.png"_spr);
+			if (!isValidImageOrIsNotDefault) jesus_christ = CCSprite::create("Jesus.png"_spr);
 			else jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
@@ -116,7 +119,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
 		resetJesus();
-		isImageValid = CCSprite::create(getFileSettingAsString("customImage").c_str()) != nullptr;
+		isValidImageOrIsNotDefault = (CCSprite::create(getFileSettingAsString("customImage").c_str()) != nullptr && getFileSettingAsString("customImage") != "Please choose an image file.");
 
 		return true;
 	}
