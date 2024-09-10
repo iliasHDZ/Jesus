@@ -30,9 +30,9 @@ bool playLayerEnabled() {
 	return getBoolSetting("playLayer") && typeinfo_cast<PlayLayer*>(gjbgl);
 }
 bool levelEditorLayerEnabled() {
-	#ifdef GEODE_IS_WINDOWS
-	return false;
-	#endif
+	// #ifdef GEODE_IS_WINDOWS
+	// return false;
+	// #endif
 	auto gjbgl = GJBaseGameLayer::get();
 	if (!gjbgl) return false;
 	return getBoolSetting("levelEditorLayer") && typeinfo_cast<LevelEditorLayer*>(gjbgl);
