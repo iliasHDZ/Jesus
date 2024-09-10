@@ -53,7 +53,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus"_spr)) {
-			if (!isValidImageOrIsNotDefault) jesus_christ = CCSprite::create("Jesus.png"_spr);
+			if (!isValidImageOrIsNotDefault) jesus_christ = CCSprite::create("jesus.png"_spr);
 			else jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
