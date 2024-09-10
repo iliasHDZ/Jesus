@@ -99,6 +99,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 			for (auto obj : *objs) {
 				if (obj == nullptr) continue;
 				if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
+				if (getBoolSetting("skipInvisibleObjects") && obj->m_isHide || obj->getOpacity() == 0) continue;
 
 				const auto sensitivityRect = CCRect(obj->getObjectRect().origin - CCPoint(sensitivity, sensitivity), obj->getObjectRect().size + CCPoint(sensitivity * 2, sensitivity * 2));
 

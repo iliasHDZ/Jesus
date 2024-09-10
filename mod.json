@@ -16,7 +16,7 @@
 	"tags": [
 		"joke"
 	],
-	"version": "v1.1.2",
+	"version": "v1.2.0",
 	"id": "iliashdz.jesus",
 	"name": "Jesus",
 	"developer": "IliasHDZ",
@@ -60,6 +60,12 @@
 				"slider-step": 1
 			}
 		},
+		"skipInvisibleObjects": {
+			"name": "Enabled",
+			"description": "Decide if you want to see Jesus when you are near invisible spikes/hazards.\n\n<cy>Jesus will still appear when you are near objects that have been explicitly disabled by <cr>Tog</c><cg>gle</c> <cy>triggers.</c>",
+			"type": "bool",
+			"default": true
+		},
 		"sensitivity": {
 			"name": "Sensitivity",
 			"description": "The minimum distance between the player hitbox and a spike hitbox required for Him (or your custom image) to appear.\n\nThe higher this value, the further away you can be from a spike in order to see Jesus.",
@@ -77,7 +83,7 @@
 		},
 		"customImage": {
 			"name": "Custom Image",
-			"description": "Choose a custom image to show instead of Jesus.",
+			"description": "If you would like a custom image to show instead of Jesus, choose one here.\n\n<cy>If you're using this in Geode v3.6.0 or higher and want to see (default) Jesus, ignore the red \"Value must be a file\" text.</c>",
 			"type": "path",
 			"default": "Please choose an image file.",
 			"control": {
@@ -93,7 +99,7 @@
 		},
 		"customSound": {
 			"name": "Custom Sound",
-			"description": "Choose an audio file to play instead of a bell.",
+			"description": "If you would like a custom audio file to play instead of a bell, choose one here.\n\n<cy>If you're using this in Geode v3.6.0 or higher and want to hear the (default) bell, ignore the red \"Value must be a file\" text.</c>",
 			"type": "path",
 			"default": "Please choose an audio file.",
 			"control": {
