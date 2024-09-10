@@ -61,8 +61,8 @@
 			}
 		},
 		"skipInvisibleObjects": {
-			"name": "Enabled",
-			"description": "Decide if you want to see Jesus when you are near invisible spikes/hazards.\n\n<cy>Jesus will still appear when you are near objects that have been explicitly disabled by <cr>Tog</c><cg>gle</c> <cy>triggers.</c>",
+			"name": "Skip Invisible Objects",
+			"description": "Decide if you want to see Jesus when you are near invisible spikes/hazards.\n\n<cy>Jesus will still appear when you are near objects that have been explicitly disabled by</c> <cr>Tog</c><cg>gle</c> <cy>triggers.</c>",
 			"type": "bool",
 			"default": true
 		},
