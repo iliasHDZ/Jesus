@@ -7,10 +7,10 @@
 	},
 	"resources": {
 		"sprites": [
-			"resources/jesus.png"
+			"resources/*.png"
 		],
 		"files": [
-			"resources/bell.ogg"
+			"resources/*.ogg"
 		]
 	},
 	"tags": [
