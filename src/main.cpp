@@ -7,7 +7,7 @@ CCSprite* jesus_christ = nullptr;
 float time_counter = 0.0;
 float last_jesus_time = -1000.0;
 
-bool isValidImageOrIsNotDefault = false;
+bool isValidImage = false;
 
 bool getBoolSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<bool>(key);
@@ -53,7 +53,7 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByID("jesus"_spr)) {
-			if (!isValidImageOrIsNotDefault) jesus_christ = CCSprite::create("jesus.png"_spr);
+			if (!isValidImage || getFileSettingAsString("customImage") == "Please choose an image file.") jesus_christ = CCSprite::create("jesus.png"_spr);
 			else jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
@@ -119,9 +119,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!GJBaseGameLayer::init()) return false;
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
-		log::info("getFileSettingAsString(\"customImage\"): {}", getFileSettingAsString("customImage"));
 		resetJesus();
-		isValidImageOrIsNotDefault = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str()) != nullptr && getFileSettingAsString("customImage") != "Please choose an image file.";
+		isValidImage = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str()) != nullptr;
 
 		return true;
 	}
