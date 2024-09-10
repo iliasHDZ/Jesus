@@ -83,7 +83,7 @@
 		},
 		"customImage": {
 			"name": "Custom Image",
-			"description": "If you would like a custom image to show instead of Jesus, choose one here.\n\n<cy>If you're using this in Geode v3.6.0 or higher and want to see (default) Jesus, ignore the red \"Value must be a file\" text.</c>",
+			"description": "If you would like a custom image to show instead of Jesus, choose one here.\n\n<cy>If you're using Geode v3.6.0 or higher and want to see Jesus (by default), ignore the red \"Value must be a file\" text.</c>",
 			"type": "path",
 			"default": "Please choose an image file.",
 			"control": {
@@ -99,7 +99,7 @@
 		},
 		"customSound": {
 			"name": "Custom Sound",
-			"description": "If you would like a custom audio file to play instead of a bell, choose one here.\n\n<cy>If you're using this in Geode v3.6.0 or higher and want to hear the (default) bell, ignore the red \"Value must be a file\" text.</c>",
+			"description": "If you would like a custom audio file to play instead of a bell, choose one here.\n\n<cy>If you're using Geode v3.6.0 or higher and want to hear the bell (by default), ignore the red \"Value must be a file\" text.</c>",
 			"type": "path",
 			"default": "Please choose an audio file.",
 			"control": {
