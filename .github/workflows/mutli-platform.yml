@@ -1,4 +1,4 @@
-name: Build Geode Mod
+name: Build Geode Mod (RelWithDebInfo)
 
 on:
   workflow_dispatch:
@@ -35,8 +35,8 @@ jobs:
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
-          # build-config: RelWithDebInfo # [vscode] comment this out (and the line below!) to Release mode
-          # export-pdb: true # [vscode] comment this out (and the line above!) to Release mode
+          build-config: RelWithDebInfo # [vscode] comment this out (and the line below!) to Release mode
+          export-pdb: true # [vscode] comment this out (and the line above!) to Release mode
           # bindings: "iliasHDZ/bindings" # [vscode] comment this out to swap to "geode-sdk/bindings"
           # bindings-ref: "bindings" # comment this out to use default branch
           # sdk: nightly # [vscode] comment this out to use stable Geode SDK version
