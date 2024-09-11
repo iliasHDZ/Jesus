@@ -7,7 +7,7 @@ CCSprite* jesus_christ = nullptr;
 float time_counter = 0.0;
 float last_jesus_time = -1000.0;
 
-bool isImageValid = false;
+bool isValidImage = false;
 
 bool getBoolSetting(std::string_view key) {
 	return Mod::get()->getSettingValue<bool>(key);
@@ -18,15 +18,24 @@ std::filesystem::path getFileSetting(std::string_view key) {
 std::string getFileSettingAsString(std::string_view key) {
 	return getFileSetting(key).string();
 }
+int64_t getIntSetting(std::string_view key) {
+	return Mod::get()->getSettingValue<int64_t>(key);
+}
 bool modEnabled() {
 	return getBoolSetting("enabled");
 }
 bool playLayerEnabled() {
+	#ifdef GEODE_IS_WINDOWS
+	return true; // this defaults to returning true because CLion sucks at understanding the nuances of Geode settings; defaulting to false would ultimately have the same effect --raydeeux
+	#endif
 	auto gjbgl = GJBaseGameLayer::get();
 	if (!gjbgl) return false;
 	return getBoolSetting("playLayer") && typeinfo_cast<PlayLayer*>(gjbgl);
 }
 bool levelEditorLayerEnabled() {
+	#ifdef GEODE_IS_WINDOWS
+	return false;
+	#endif
 	auto gjbgl = GJBaseGameLayer::get();
 	if (!gjbgl) return false;
 	return getBoolSetting("levelEditorLayer") && typeinfo_cast<LevelEditorLayer*>(gjbgl);
@@ -34,7 +43,6 @@ bool levelEditorLayerEnabled() {
 void resetJesus() {
 	time_counter = 0.0;
 	last_jesus_time = -1000.0;
-	log::info("jesus variables reset");
 }
 
 class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
@@ -43,10 +51,11 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		
 		auto scene = CCDirector::get()->getRunningScene();
 
-		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
-		if (!scene->getChildByID("jesus"_spr)) {
-			if (getFileSettingAsString("customImage") == "Please choose an image file." || !isImageValid) jesus_christ = CCSprite::create("Jesus.png"_spr);
-			else jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
+		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare --iliashdz
+		if (!scene->getChildByIDRecursive("jesus"_spr)) {
+			if (isValidImage && getFileSettingAsString("customImage") != "Please choose an image file.")
+				jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
+			else jesus_christ = CCSprite::create("jesus.png"_spr);
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
@@ -65,8 +74,13 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if ((time_counter < 1.5) || (time_counter - last_jesus_time < 0.2)) return;
 		last_jesus_time = time_counter;
 
-		if (getFileSettingAsString("customSound") == "Please choose an audio file.") FMODAudioEngine::sharedEngine()->playEffect("bell.ogg"_spr);
-		else FMODAudioEngine::sharedEngine()->playEffect(getFileSettingAsString("customSound"));
+		auto system = FMODAudioEngine::get()->m_system;
+		FMOD::Channel* channel;
+		FMOD::Sound* sound;
+		if (getFileSettingAsString("customSound") != "Please choose an audio file.") system->createSound(getFileSettingAsString("customSound").c_str(), FMOD_DEFAULT, nullptr, &sound);
+		else system->createSound((Mod::get()->getResourcesDir() / "bell.ogg").string().c_str(), FMOD_DEFAULT, nullptr, &sound);
+		system->playSound(sound, nullptr, false, &channel);
+		channel->setVolume(getIntSetting("volume") / 100.0f);
 
 		if (jesus_christ->getActionByTag(1)) jesus_christ->stopActionByTag(1);
 
@@ -80,35 +94,21 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		time_counter += dt;
 	}
 
-	void collisionCheckObjects(PlayerObject* plr, gd::vector<GameObject*>* objs, int v0, float v1) {
-		GJBaseGameLayer::collisionCheckObjects(plr, objs, v0, v1);
-		
-		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
+	void collisionCheckObjects(PlayerObject* player, gd::vector<GameObject*>* objs, int v0, float v1) {
+		if (modEnabled() && (playLayerEnabled() || levelEditorLayerEnabled())) {
+			float sensitivity = Mod::get()->getSettingValue<double>("sensitivity");
+			for (auto obj : *objs) {
+				if (obj == nullptr) continue;
+				if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
+				if (getBoolSetting("skipInvisibleObjects") && obj->m_isHide || obj->getOpacity() == 0) continue;
 
-		float sensitivity = Mod::get()->getSettingValue<double>("sensitivity");
+				const auto sensitivityRect = CCRect(obj->getObjectRect().origin - CCPoint(sensitivity, sensitivity), obj->getObjectRect().size + CCPoint(sensitivity * 2, sensitivity * 2));
 
-		for (auto obj : *objs) {
-			if (obj->m_objectType != GameObjectType::Hazard && obj->m_objectType != GameObjectType::AnimatedHazard) continue;
-
-			CCRect rect = CCRect(
-				obj->getObjectRect().origin - CCPoint(sensitivity, sensitivity),
-				obj->getObjectRect().size + CCPoint(sensitivity * 2, sensitivity * 2)
-			);
-
-			if (plr->getObjectRect().intersectsRect(rect)) jesus();
+				if (player->getObjectRect().intersectsRect(sensitivityRect)) jesus();
+			}
 		}
-	}
-  
-	void toggleDualMode(GameObject* p0, bool p1, PlayerObject* p2, bool p3) {
-		GJBaseGameLayer::toggleDualMode(p0, p1, p2, p3);
-		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return;
-		resetJesus();
-		/*
-		ignore below code; it was to test resetJesus()
-		without relying on a missing GJBGL binding for macos ARM
-		--raydeeux
-		log::info("isLevelEditor: {}", typeinfo_cast<LevelEditorLayer*>(gjbgl));
-		*/
+
+		GJBaseGameLayer::collisionCheckObjects(player, objs, v0, v1);
 	}
 
 	void resetLevelVariables() {
@@ -121,7 +121,21 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
 		resetJesus();
-		isImageValid = CCSprite::create(getFileSettingAsString("customImage").c_str()) != nullptr;
+		CCSprite* sprite = CCSprite::create(getFileSettingAsString("customImage").c_str());
+		isValidImage = sprite;
+		// code adapted from https://github.com/geode-sdk/DevTools/tree/main/src/pages/Attributes.cpp#L152 --raydeeux
+		// dank, your `CCTextureCache` doesnt work without a game restart so i had to yoink textureloader code --raydeeux
+		auto textureProtocol = typeinfo_cast<CCTextureProtocol*>(sprite);
+		if (auto texture = textureProtocol->getTexture()) {
+			auto cachedTextures = CCTextureCache::sharedTextureCache()->m_pTextures;
+			for (auto [key, obj] : CCDictionaryExt<std::string, CCTexture2D*>(cachedTextures)) {
+				if (obj == texture && key.find("geode.texture-loader") != std::string::npos && key.find("fallback") != std::string::npos) {
+					isValidImage = false;
+					break;
+				}
+			}
+		}
+		log::info("isValidImage: {}", isValidImage);
 
 		return true;
 	}
