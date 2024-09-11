@@ -121,11 +121,9 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
 		resetJesus();
-		#ifndef GEODE_IS_ANDROID
-		isValidImage = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str());
-		#else
-		isValidImage = CCSprite::create(getFileSettingAsString("customImage").c_str());
-		#endif
+		CCSprite* sprite = CCSprite::create(getFileSettingAsString("customImage").c_str());
+		isValidImage = sprite;
+		log::info("sprite->getTexture()->getName(): {}", sprite->getTexture()->getName()); // 1404?
 		log::info("isValidImage: {}", isValidImage);
 
 		return true;
