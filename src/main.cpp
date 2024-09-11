@@ -123,7 +123,17 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		resetJesus();
 		CCSprite* sprite = CCSprite::create(getFileSettingAsString("customImage").c_str());
 		isValidImage = sprite;
-		log::info("sprite->getTexture()->getName(): {}", sprite->getTexture()->getName()); // 1404?
+		// code adapted from https://github.com/geode-sdk/DevTools/tree/main/src/pages/Attributes.cpp#L152
+		auto textureProtocol = typeinfo_cast<CCTextureProtocol*>(sprite);
+		if (auto texture = textureProtocol->getTexture()) {
+			auto cachedTextures = CCTextureCache::sharedTextureCache()->m_pTextures;
+			for (auto [key, obj] : CCDictionaryExt<std::string, CCTexture2D*>(cachedTextures)) {
+				if (obj == texture && key.find("geode.texture-loader") != std::string::npos && key.find("fallback") != std::string::npos) {
+					isValidImage = false;
+					break;
+				}
+			}
+		}
 		log::info("isValidImage: {}", isValidImage);
 
 		return true;
