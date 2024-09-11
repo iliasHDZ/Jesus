@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-CCSprite* jesus_christ = CCSprite::create("jesus.png"_spr);
+CCSprite* jesus_christ = nullptr;
 
 float time_counter = 0.0;
 float last_jesus_time = -1000.0;
@@ -122,7 +122,9 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 		resetJesus();
 		isValidImage = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str());
-		// log::info("isValidImage: {}", isValidImage);
+		#ifdef GEODE_IS_ANDROID
+		log::info("isValidImage: {}", isValidImage);
+		#endif
 
 		return true;
 	}
