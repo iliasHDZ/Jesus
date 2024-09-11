@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-CCSprite* jesus_christ = nullptr;
+CCSprite* jesus_christ = CCSprite::create("jesus.png"_spr);
 
 float time_counter = 0.0;
 float last_jesus_time = -1000.0;
@@ -53,9 +53,9 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 
 		// A section of this code was copied from https://github.com/NicknameGG/robtop-jumpscare
 		if (!scene->getChildByIDRecursive("jesus"_spr)) {
-			CCSprite* customSprite = CCSprite::create(getFileSettingAsString("customImage").c_str());
-			if ((!isValidImage && !customSprite) || getFileSettingAsString("customImage") == "Please choose an image file.") jesus_christ = CCSprite::create("jesus.png"_spr);
-			else jesus_christ = customSprite;
+			if (isValidImage && getFileSettingAsString("customImage") != "Please choose an image file.")
+				jesus_christ = CCSprite::create(getFileSettingAsString("customImage").c_str());
+			else jesus_christ = CCSprite::create("jesus.png"_spr);
 			jesus_christ->setID("jesus"_spr);
 			CCSize winSize = CCDirector::get()->getWinSize();
 
@@ -121,7 +121,8 @@ class $modify(MyGJBaseGameLayer, GJBaseGameLayer) {
 		if (!modEnabled() || (!playLayerEnabled() && !levelEditorLayerEnabled())) return true;
 
 		resetJesus();
-		isValidImage = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str()) != nullptr;
+		isValidImage = CCTextureCache::sharedTextureCache()->textureForKey(getFileSettingAsString("customImage").c_str());
+		// log::info("isValidImage: {}", isValidImage);
 
 		return true;
 	}
